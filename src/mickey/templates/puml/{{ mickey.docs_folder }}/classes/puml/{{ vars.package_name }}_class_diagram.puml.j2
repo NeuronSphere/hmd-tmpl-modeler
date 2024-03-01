@@ -1,0 +1,24 @@
+# The code in this file is generated automatically. 
+# DO NOT EDIT!
+@startuml
+
+{% for noun in data.nouns %}
+class {{ noun.name|snake_to_pascal }} << Noun >> {
+    {%- for name, def in noun.attributes.items() %}
+    {{ def.type }} {{ name }}
+    {%- endfor %}
+}
+{% endfor %}
+{% for relationship in data.relationships %}
+class {{ relationship.name|snake_to_pascal }} << Relationship >> #LightGreen {
+    {%- for name, def in relationship.attributes.items() %}
+    {{ def.type }} {{ name }}
+    {%- endfor %}
+}
+{% endfor %}
+{% for relationship in data.relationships %}
+{{ relationship.ref_from | extract_class }} {{ relationship | puml_line_string_from }} {{ relationship.name|snake_to_pascal }}
+{{ relationship.name|snake_to_pascal }} {{ relationship | puml_line_string_to }} {{ relationship.ref_to | extract_class }}
+{%- endfor %}
+
+@enduml

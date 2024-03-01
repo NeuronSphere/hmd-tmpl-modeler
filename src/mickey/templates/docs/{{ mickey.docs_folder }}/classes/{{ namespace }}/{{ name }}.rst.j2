@@ -1,0 +1,17 @@
+.. {{ data.namespace }}.{{ data.name }}
+
+{{ data.namespace }}.{{ data.name }}
+=============================================
+
+**Metatype**: {{ data.metatype }}
+{% if data.metatype == 'relationship' %}
+**Ref From**: {{ data.ref_from }}
+**Ref To**: {{ data.ref_to }}
+{% endif %}
+
+Attributes
+++++++++++
+
+{% for attr, value in data.attributes.items() %}
+* **{{ attr }} ({{value.type}})** {% if value.required %}(required){% endif %}: {{ value.description }}
+{% endfor %}

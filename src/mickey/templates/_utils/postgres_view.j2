@@ -1,0 +1,20 @@
+{%- macro sql_view(data) %}
+drop view if exists {{data.name}}_{{data.namespace|reverse_namespace}};
+create view {{data.name}}_{{data.namespace|reverse_namespace}} as
+    select
+        id,
+        {% for field, field_spec in data.attributes.items() -%}
+        content -> '{{ field }}' as {{ field }},
+        {% endfor -%}
+        {% if data.metatype == "relationship" -%}
+        from_id,
+        to_id,
+        {% endif -%}
+        created_at, updated_at
+    {% if data.metatype == "relationship" -%}
+    from relationship
+    {% else -%}
+    from entity
+    {% endif -%}
+    where is_deleted = false and name = '{{ data.namespace }}.{{ data.name }}';
+{%- endmacro -%}

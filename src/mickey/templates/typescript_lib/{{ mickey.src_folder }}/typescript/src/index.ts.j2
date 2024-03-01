@@ -1,0 +1,152 @@
+{%- macro field_def(field_name, field_spec) %}
+    public get {{ field_name }}(): {{ field_spec | extract_attribute_ts_type }}{% if not field_spec.required %} | undefined{% endif %} {
+      return this.data.{{ field_name }};
+    }
+    public set {{ field_name }}(value: {{ field_spec | extract_attribute_ts_type }}{% if not field_spec.required %} | undefined{% endif %}) {
+      this.data.{{ field_name }} = this._setter('{{ field_name }}', value);
+    }
+{%- endmacro -%}
+
+{%- macro attribute(value, sep) -%}
+  {
+    {% for attr, value in value.items() %}
+      {% if value is boolean -%}
+      {{- attr }}: {%- if value %}{{ 'true' }}{% else %}{{ 'false' }}{% endif -%}{{ sep }}
+      {%- elif attr == 'enum_def' -%}
+      {{- attr }}: {{ value }}{{ sep }}
+      {%- else -%}
+      {{- attr }}: {{ value | tojson }}{{ sep }}
+      {% endif -%}
+    {%- endfor %}
+    }{{ sep }}
+{%- endmacro -%}
+
+{%- macro attributes_def(attributes, sep) -%}
+  {
+    {%- for attr, value in attributes.items() %}
+      {{ attr }}: {{ attribute(value, sep) }}
+    {%- endfor %}
+  }
+{%- endmacro -%}
+
+{%- macro noun_object(noun) -%}
+{ {%- for key, value in noun.items() %}{%- if value | is_dict %}{{ key }}: {{ attributes_def(value, ',') }},{% else %}{{ key }}: '{{ value }}',{%- endif -%}{%- endfor %}}
+{% endmacro -%}
+
+{%- macro noun_interface(noun) %}
+  export interface {{ noun.name | snake_to_pascal }}Schema extends NounSchema {
+    {%- for key, value in noun.items() %}
+    {%- if value | is_dict %}
+    {{ key }}: {{ attributes_def(value, ';') }};
+    {% else %}
+    {{ key }}: '{{ value }}';
+    {%- endif -%}
+    {%- endfor %}
+  }
+{% endmacro -%}
+
+{% macro noun_interfaces(nouns) %}
+{%- for noun in nouns %}
+{{ noun_interface(noun) }}
+{% endfor -%}
+{% endmacro -%}
+
+{% macro noun_class(noun) %}
+export class {{ noun.name | snake_to_pascal }} extends Noun {
+  static entity_definition: {{ noun.namespace }}.{{ noun.name | snake_to_pascal }}Schema = {{- noun_object(noun) -}};
+  data: EntityData<{{ noun.name | snake_to_pascal }}>;
+
+  constructor(obj: EntityData<{{ noun.name | snake_to_pascal }}>) {
+    super(obj);
+    let data: any = {};
+    for (let attr in {{ noun.name | snake_to_pascal }}.entity_definition.attributes) {
+      let value = this._setter(
+        attr,
+        obj[attr as keyof EntityData<{{ noun.name | snake_to_pascal }}>],
+      );
+      data[attr] = value;
+    }
+    this.data = data;
+  }
+
+  entityDefinition() {
+    return {{ noun.name | snake_to_pascal }}.entity_definition;
+  }
+
+  {% for attr, spec in noun.attributes.items() %}
+  {{ field_def(attr, spec) }}
+  {% endfor %}
+}
+{% endmacro -%}
+
+{% macro noun_classes(nouns) %}
+{%- for noun in nouns %}
+{{ noun_class(noun) }}
+{% endfor -%}
+{% endmacro -%}
+
+{% macro rel_class(rel) %}
+export class {{ rel.name | snake_to_pascal }} extends Relationship<{{ rel.ref_from | extract_namespace }}.{{ rel.ref_from | extract_class }}, {{ rel.ref_to | extract_namespace }}.{{ rel.ref_to | extract_class }}> {
+  static entity_definition: {{ rel.namespace }}.{{ rel.name | snake_to_pascal }}Schema = {{- noun_object(rel) -}};
+  data: EntityData<{{ rel.name | snake_to_pascal }}>;
+
+  constructor(obj: EntityData<{{ rel.name | snake_to_pascal }}>, ref_from: {{ rel.ref_from | extract_namespace }}.{{ rel.ref_from | extract_class }}, ref_to: {{ rel.ref_to | extract_namespace }}.{{ rel.ref_to | extract_class }}) {
+    super(obj, ref_from, ref_to);
+    let data: any = {};
+    for (let attr in {{ rel.name | snake_to_pascal }}.entity_definition.attributes) {
+      let value = this._setter(
+        attr,
+        obj[attr as keyof EntityData<{{ rel.name | snake_to_pascal }}>],
+      );
+      data[attr] = value;
+    }
+    this.data = data;
+  }
+
+  entityDefinition() {
+    return {{ rel.name | snake_to_pascal }}.entity_definition;
+  }
+
+  {% for attr, spec in rel.attributes.items() %}
+  {{ field_def(attr, spec) }}
+  {% endfor %}
+}
+{% endmacro -%}
+
+{% macro rel_classes(rels) %}
+{%- for rel in rels %}
+{{ rel_class(rel) }}
+{% endfor -%}
+{% endmacro -%}
+
+{%- macro rel_interface(rel) %}
+  export interface {{ rel.name | snake_to_pascal }}Schema extends RelationshipSchema {
+    {%- for key, value in rel.items() %}
+    {%- if value | is_dict %}
+    {{ key }}: {{ attributes_def(value, ';') }};
+    {% else %}
+    {{ key }}: '{{ value }}';
+    {%- endif -%}
+    {%- endfor %}
+  }
+{% endmacro -%}
+
+{% macro rel_interfaces(rels) %}
+{%- for rel in rels %}
+{{ rel_interface(rel) }}
+{% endfor -%}
+{% endmacro -%}
+import {
+  NounSchema, 
+  RelationshipSchema, 
+  Noun, 
+  Relationship,
+  EntityData,
+} from '@hmdlabs/meta-types';
+
+export namespace {{ vars.package_name | replace("/", ".") }} {
+  {{ noun_interfaces(data.nouns) }}
+  {{ rel_interfaces(data.relationships) }}
+  {{ noun_classes(data.nouns) }}
+  {{ rel_classes(data.relationships) }}
+}

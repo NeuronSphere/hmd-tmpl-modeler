@@ -1,0 +1,93 @@
+# The code in this file is generated automatically.
+# DO NOT EDIT!
+{% macro get_def(namespace, name) -%}
+    def get_{{name}}_{{namespace|reverse_namespace}}(self, id_: str) -> {{ name|snake_to_pascal }}:
+        return self._base_client.get_entity({{ name|snake_to_pascal }}.get_namespace_name(), id_)
+{%- endmacro -%}
+{%- macro upsert_def(namespace, name) -%}
+    def upsert_{{name}}_{{namespace|reverse_namespace}}(self, entity: {{ name|snake_to_pascal }}) -> {{ name|snake_to_pascal }}:
+        if not isinstance(entity, {{ name|snake_to_pascal }}):
+            raise Exception("entity must be an instance of {{ name|snake_to_pascal }}")
+        return self._base_client.upsert_entity(entity)
+{%- endmacro -%}
+{%- macro delete_def(namespace, name) -%}
+    def delete_{{name}}_{{namespace|reverse_namespace}}(self, id_: str) -> None:
+        self._base_client.delete_entity({{ name|snake_to_pascal }}.get_namespace_name(), id_)
+{%- endmacro -%}
+{% macro search_def(namespace, name) %}
+    def search_{{name}}_{{namespace|reverse_namespace}}(self, filter_: dict) -> List[{{ name|snake_to_pascal }}]:
+        return self._base_client.search_entity({{ name|snake_to_pascal }}.get_namespace_name(), filter_)
+{%- endmacro -%}
+{%- macro rel_from_def(namespace, name, from_type) -%}
+    def get_from_{{name}}_{{namespace|reverse_namespace}}(self, entity: {{ from_type }}) -> List[{{ name|snake_to_pascal }}]:
+        if not isinstance(entity, {{ from_type }}):
+            raise Exception("entity must be an instance of {{ from_type }}")
+        return self._base_client.get_relationships_from(entity, {{ name|snake_to_pascal }}.get_namespace_name())
+{%- endmacro -%}
+{%- macro rel_to_def(namespace, name, to_type) -%}
+    def get_to_{{name}}_{{namespace|reverse_namespace}}(self, entity: {{ to_type }}) -> List[{{ name|snake_to_pascal }}]:
+        if not isinstance(entity, {{ to_type }}):
+            raise Exception("entity must be an instance of {{ to_type }}")
+        return self._base_client.get_relationships_to(entity, {{ name|snake_to_pascal }}.get_namespace_name())
+{%- endmacro -%}
+
+from hmd_graphql_client.hmd_base_client import BaseClient
+from typing import List
+from hmd_schema_loader.hmd_schema_loader import get_default_loader, get_schema_root
+
+{% for noun in data.nouns %}
+from .{{ noun.name }} import {{ noun.name|snake_to_pascal -}}
+{% endfor %}
+{% for rel in data.relationships %}
+{% if not (rel.ref_from | replace((rel.ref_from | extract_namespace + "."), '')) in (data.nouns | map(attribute='name') | list)%}
+from {{rel.ref_from}} import {{rel.ref_from | extract_class }}
+{% endif %}
+{% if not (rel.ref_to | replace((rel.ref_to | extract_namespace + "."), '')) in (data.nouns | map(attribute='name') | list)%}
+from {{rel.ref_to}} import {{rel.ref_to | extract_class }}
+{% endif %}
+from .{{ rel.name }} import {{ rel.name|snake_to_pascal -}}
+{% endfor %}
+
+def get_client_loader():
+    return get_default_loader("{{ vars.base_package }}")
+
+def get_client_schema_root():
+    return get_schema_root("{{ vars.base_package }}")
+
+class {{ (vars.package_name+"_client")|snake_to_pascal }}:
+    def __init__(self, base_client: BaseClient):
+        self._base_client = base_client
+
+    # Generic upsert...
+    def upsert(self, entity):
+        return self._base_client.upsert_entity(entity)
+
+    # Generic delete...
+    def delete(self, entity):
+        self._base_client.delete_entity(entity.get_namespace_name(), entity.identifier)
+
+    # Nouns...
+{% for noun in data.nouns %}
+    # {{ noun.namespace}}_{{ noun.name }}
+    {{ get_def(noun.namespace, noun.name) }}
+
+    {{ delete_def(noun.namespace, noun.name) }}
+
+    {{ upsert_def(noun.namespace, noun.name) }}
+
+    {{ search_def(noun.namespace, noun.name) }}
+{% endfor %}
+
+    # Relationships...
+{% for rel in data.relationships %}
+    # {{ rel.namespace}}_{{ rel.name }}
+    {{ delete_def(rel.namespace, rel.name) }}
+
+    {{ upsert_def(rel.namespace, rel.name) }}
+
+    {{ rel_from_def(rel.namespace, rel.name, rel.ref_from|extract_class) }}
+
+    {{ rel_to_def(rel.namespace, rel.name, rel.ref_to|extract_class) }}
+
+
+{% endfor %}

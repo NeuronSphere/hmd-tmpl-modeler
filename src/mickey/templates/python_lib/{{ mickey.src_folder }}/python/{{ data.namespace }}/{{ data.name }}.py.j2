@@ -1,0 +1,64 @@
+{% macro field_def(field_name, field_type) %}
+    @property
+    def {{ field_name }}(self) -> {{ field_type | python_field_type }}:
+        return self._getter("{{ field_name }}")
+
+    @{{field_name}}.setter
+    def {{ field_name }}(self, value: {{ field_type | python_field_type }}) -> None:
+        self._setter("{{ field_name }}", value)
+{%- endmacro %}
+{% macro rel_def(direction, rel_type) %}
+    def get_{{ direction }}_{{ rel_type|reverse_namespace }}(self):
+        return self.{{ direction }}_rels["{{ rel_type }}"]
+{%- endmacro %}
+from hmd_meta_types import Relationship, Noun, Entity
+{% if data.metatype == "relationship" -%}
+from {{ data.ref_from }} import {{ data.ref_from | extract_class }}
+from {{ data.ref_to }} import {{ data.ref_to | extract_class }}
+{%- endif %}
+from datetime import datetime
+from typing import List, Dict, Any
+
+class {{ data.name|snake_to_pascal }}({{""|entity_type}}):
+
+    _entity_def = \
+        {{""|insert_context}}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    @staticmethod
+    def entity_definition():
+        return {{ data.name|snake_to_pascal }}._entity_def
+
+    @staticmethod
+    def get_namespace_name():
+        return Entity.get_namespace_name({{ data.name|snake_to_pascal }}._entity_def)
+
+
+    {% if data.metatype == "relationship" -%}
+    @staticmethod
+    def ref_from_type():
+        return {{ data.ref_from | extract_class }}
+
+    @staticmethod
+    def ref_to_type():
+        return {{ data.ref_to | extract_class }}
+    {%- endif %}
+
+    {% for field, field_spec in data.attributes.items() %}
+        {{ field_def(field, field_spec.type) }}
+    {% endfor %}
+
+    {% if data.metatype == "noun" -%}
+    {% for rel_type in to %}
+    {% if 'namespace' in rel_type %}
+        {{ rel_def("to", rel_type.namespace + '.' + rel_type.name) }}
+    {% endif %}
+    {% endfor %}
+    {% for rel_type in from %}
+    {% if 'namespace' in rel_type %}
+        {{ rel_def("from", rel_type.namespace + '.' + rel_type.name) }}
+    {% endif %}
+    {% endfor %}
+    {%- endif %}

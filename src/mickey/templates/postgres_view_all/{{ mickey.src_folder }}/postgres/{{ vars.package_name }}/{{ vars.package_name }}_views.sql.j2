@@ -1,0 +1,12 @@
+{%- from 'hmd-tmpl-vocabgen/_utils/postgres_view.j2' import sql_view %}
+{%- for item in data.nouns %}
+{{ sql_view(item) }}
+
+{% endfor %}
+
+{%- for item in data.relationships %}
+{{ sql_view(item) }}
+
+{% endfor %}
+
+
