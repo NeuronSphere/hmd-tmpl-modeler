@@ -1,4 +1,4 @@
-{%- from 'hmd-tmpl-vocabgen/_utils/postgres_view.j2' import sql_view %}
+{%- from 'hmd-tmpl-modeler/_utils/postgres_view.j2' import sql_view %}
 {%- for item in data.nouns %}
 {{ sql_view(item) }}
 
