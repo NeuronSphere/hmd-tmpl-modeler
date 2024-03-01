@@ -1,0 +1,12 @@
+{
+  "name": "hmd-tmpl-modeler",
+  "description": "Base templates for NeuronSphere Modeler exports",
+  "build": {},
+  "project_type": {
+    "name": "Mickey Templates",
+    "facets": [
+      "default_repo",
+      "mickey_templates_repo"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "_org": "hmd",
+  "_repo_type": "tmpl-",
+  "short_name": "modeler",
+  "project_name": "hmd-tmpl-modeler",
+  "repo_name": "hmd-tmpl-modeler",
+  "description": "Base templates for NeuronSphere Modeler exports",
+  "_author": "Alex Burgoon",
+  "_author_email": "alex.burgoon@hmdlabs.io",
+  "_template": "/tmp/tmpcq7bk6x0/hmd_cli_repo",
+  "_output_dir": "/home/aburg/hmd-public-examples/projects"
+}
