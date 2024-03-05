@@ -9,9 +9,9 @@
         "engine_type": "postgres",
         "engine_config": {
           "host": "db",
-          "user": "{{vars.package_name}",
-          "password": "{{vars.package_name}",
-          "db_name": "{{vars.package_name}"
+          "user": "{{vars.package_name}}",
+          "password": "{{vars.package_name}}",
+          "db_name": "{{vars.package_name}}"
         }
       }
     },
