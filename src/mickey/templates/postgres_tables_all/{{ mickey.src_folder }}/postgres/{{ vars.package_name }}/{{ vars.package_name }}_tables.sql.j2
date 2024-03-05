@@ -1,0 +1,12 @@
+{%- from 'hmd-tmpl-modeler/_utils/postgres_table.j2' import sql_table %}
+{%- for item in data.nouns %}
+{{ sql_table(item) }}
+
+{% endfor %}
+
+{%- for item in data.relationships %}
+{{ sql_table(item) }}
+
+{% endfor %}
+
+

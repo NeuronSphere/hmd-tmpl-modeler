@@ -1,0 +1,98 @@
+# The code in this file is generated automatically.
+# DO NOT EDIT!
+
+package base.{{ "{{" }} data.standard_name {{ "}}" }}.main
+import data.base.{{ "{{" }} data.standard_name {{ "}}" }}.groups
+
+__rego__metadoc__ := {
+    "id": "TEST",
+    "title": "Policy Doc Test",
+    "description": "this is testing bartleby Policy Doc generation",
+    "custom": {
+        "severity": "High"
+    }
+}
+
+{% for noun in data.nouns %}
+#*****************************************************
+# Noun: {{ noun.namespace }}.{{ noun.name }}
+
+# search_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ noun.namespace }}.{{ noun.name }}"]
+  input.method == "POST"
+  token_is_valid(token)
+}
+
+# get_entities
+invoke_operation {
+  array.slice(input.path, 0, 3) == ["api", "instances", "{{ noun.namespace }}.{{ noun.name }}"]
+  input.method == "GET"
+  token_is_valid(token)
+}
+
+# put_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ noun.namespace }}.{{ noun.name }}"]
+  input.method == "PUT"
+  token_is_valid(token)
+}
+
+# get_entity
+# get_relationships_from_to
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ noun.namespace }}.{{ noun.name }}"]
+  input.method == "GET"
+  token_is_valid(token)
+}
+
+# delete_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ noun.namespace }}.{{ noun.name }}"]
+  input.method == "DELETE"
+  token_is_valid(token)
+}
+{% endfor %}
+
+# Relationships...
+
+{% for rel in data.relationships %}
+#*****************************************************
+# Relationship: {{ rel.namespace }}.{{ rel.name }}
+
+# get_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ rel.namespace }}.{{ rel.name }}"]
+  input.method == "GET"
+  token_is_valid(token)
+}
+
+# put_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ rel.namespace }}.{{ rel.name }}"]
+  input.method == "PUT"
+  token_is_valid(token)
+}
+
+# delete_entity
+invoke_operation {
+  array.slice(input.path, 0, 2) == ["api", "{{ rel.namespace }}.{{ rel.name }}"]
+  input.method == "DELETE"
+  token_is_valid(token)
+}
+{% endfor %}
+
+token = {"payload": payload} {
+  [header, payload, signature] := io.jwt.decode(input.token)
+}
+
+token_is_valid(token) {
+  auds := ["api://neuronsphere", "api://neuronsphere-services"]
+  token.payload.aud == auds[_]
+}
+
+
+user_is("service") {
+  some scope
+  token.payload.scp[scope] == "service"
+}

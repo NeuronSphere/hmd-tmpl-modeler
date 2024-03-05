@@ -1,0 +1,52 @@
+{%- set type_map = {
+    "byte": "int",
+    "int": "int",
+    "integer": "int",
+    "int8": "int",
+    "int16": "int",
+    "int32": "int",
+    "int64": "BIGINT",
+    "uint8": "int",
+    "uint16": "int",
+    "uint32": "int",
+    "uint64": "int",
+    "string": "varchar",
+    "float": "double",
+    "float32": "double",
+    "float64": "double",
+    "enum": "int",
+    "boolean": "boolean",
+    "timestamp": "timestamp",
+    "datetime": "timestamp",
+    "date": "date"
+}-%}
+
+{% macro get_type(type) %}
+    {{- type_map[type] -}}
+{% endmacro %}
+
+{%- macro sql_table(data) %}
+create table if not exists {{data.name}}_{{data.namespace|reverse_namespace}} (
+    id varchar,
+    {% for field, field_spec in data.attributes.items() %}
+    {{ field }} {{ get_type(field_spec.type) }},
+    {% endfor %}
+    {% if data.metatype == "relationship" -%}
+    from_id varchar,
+    to_id varchar,
+    {% endif -%}
+    created_at timestamp, 
+    updated_at timestamp
+) 
+
+{% if data.description != '' and data.description != None %}
+COMMENT ON TABLE {{data.name}}_{{data.namespace|reverse_namespace}} IS '{{ data.description }}'
+{% endif %}
+
+{% for field, field_spec in data.attributes.items() %}
+{% if field_spec.description != '' and field_spec.description != None %}
+COMMENT ON TABLE {{data.name}}_{{data.namespace|reverse_namespace}}.{{ field }} IS '{{ field_spec.description }}'
+{% endif %}
+{% endfor %}
+
+{%- endmacro -%}
