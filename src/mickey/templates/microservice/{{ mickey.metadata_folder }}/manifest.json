@@ -44,7 +44,7 @@
     "default_configuration": {
       "service_config": {
         "loader_config": {
-          "base": []
+          "base": ["{{ vars.package_name }}"]
         },
         "service_loader": "base",
         "hmd_db_engines": {
