@@ -11,7 +11,8 @@ setup(
     name="{{ vars.package_name }}",
     version=version,
     license="unlicensed",
+    package_data={"{{ vars.package_name }}": ["schemas/**/*.hms"]},
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[],
+    install_requires=["hmd-meta-types", "hmd-schema-loader"],
 )
