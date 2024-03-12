@@ -35,7 +35,7 @@
 
 {%- macro noun_interface(noun) %}
   export interface {{ noun.name | snake_to_pascal }}Schema extends NounSchema {
-    {%- for key, value in noun.items() %}
+    {%- for key, value in noun.attributes.items() %}
     {%- if value | is_dict %}
     {{ key }}: {{ attributes_def(value, ';') }};
     {% else %}
@@ -121,7 +121,7 @@ export class {{ rel.name | snake_to_pascal }} extends Relationship<{{ rel.ref_fr
 
 {%- macro rel_interface(rel) %}
   export interface {{ rel.name | snake_to_pascal }}Schema extends RelationshipSchema {
-    {%- for key, value in rel.items() %}
+    {%- for key, value in rel.attributes.items() %}
     {%- if value | is_dict %}
     {{ key }}: {{ attributes_def(value, ';') }};
     {% else %}
