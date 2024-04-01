@@ -138,3 +138,11 @@ yarn-debug.log*
 yarn-error.log*
 
 .mickey_cache/
+src/python/
+src/opa-bundles/
+src/postgres/
+src/typescript/
+docs/classes/
+src/docker/
+src/cdktf/
+meta-data/config_local.json

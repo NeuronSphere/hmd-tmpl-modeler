@@ -8,5 +8,112 @@
       "default_repo",
       "mickey_templates_repo"
     ]
+  },
+  "generate": {
+    "docs": {
+      "contexts": ["ref:entity_data"],
+      "templates": ["hmd-tmpl-modeler/docs"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "postgres_tables": {
+      "contexts": ["ref:entity_data"],
+      "templates": ["hmd-tmpl-modeler/postgres_tables"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "postgres_views": {
+      "contexts": ["ref:entity_data"],
+      "templates": ["hmd-tmpl-modeler/postgres_views"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "python_lib": {
+      "contexts": ["ref:entity_data"],
+      "templates": ["hmd-tmpl-modeler/python_lib"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "postgres_tables_all": {
+      "contexts": ["ref:all"],
+      "templates": ["hmd-tmpl-modeler/postgres_tables_all"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "postgres_views_all": {
+      "contexts": ["ref:all"],
+      "templates": ["hmd-tmpl-modeler/postgres_views_all"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "puml": {
+      "contexts": ["ref:all"],
+      "templates": ["hmd-tmpl-modeler/puml"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    },
+    "typescript_lib": {
+      "contexts": ["ref:all"],
+      "templates": ["hmd-tmpl-modeler/typescript_lib"],
+      "hooks": ["./src/mickey/hooks/add_jinja_filters.py"]
+    }
+  },
+  "contexts": {
+    "schemas": {
+      "each": ["src/schemas/**/*.hms"]
+    },
+    "nouns": {
+      "extend": "ref:schemas",
+      "filter": {
+        "property": "metatype",
+        "operator": "=",
+        "value": "noun"
+      }
+    },
+    "relationships": {
+      "extend": "ref:schemas",
+      "filter": {
+        "property": "metatype",
+        "operator": "=",
+        "value": "relationship"
+      }
+    },
+    "all_data": {
+      "struct": {
+        "nouns": "ref:nouns",
+        "relationships": "ref:relationships"
+      }
+    },
+    "all": {
+      "struct": {
+        "data": "ref:all_data"
+      }
+    },
+    "entity_data": {
+      "extend": "ref:schemas",
+      "struct": {
+        "data": {
+          "extend": "ref:schemas",
+          "filter": {
+            "property": "name",
+            "operator": "=",
+            "value": "{name}"
+          },
+          "first": true
+        },
+        "from": {
+          "extend": "ref:relationships",
+          "filter": {
+            "property": "ref_from",
+            "operator": "=",
+            "value": "{namespace}.{name}"
+          }
+        },
+        "to": {
+          "extend": "ref:relationships",
+          "filter": {
+            "property": "ref_to",
+            "operator": "=",
+            "value": "{namespace}.{name}"
+          }
+        }
+      }
+    }
+  },
+  "global_variables": {
+    "package_name": "hmd_tmpl_modeler"
   }
 }
