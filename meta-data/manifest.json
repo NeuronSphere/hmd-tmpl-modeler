@@ -4,10 +4,7 @@
   "build": {},
   "project_type": {
     "name": "Mickey Templates",
-    "facets": [
-      "default_repo",
-      "mickey_templates_repo"
-    ]
+    "facets": ["default_repo", "mickey_templates_repo"]
   },
   "generate": {
     "docs": {
@@ -79,7 +76,7 @@
     },
     "all": {
       "struct": {
-        "data": "ref:all_data"
+        "data": {"extend": "ref:all_data", "first": true}
       }
     },
     "entity_data": {
