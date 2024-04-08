@@ -29,7 +29,7 @@ Adding new templates is a simple process:
           }
 
 
-        .. note:: The *contexts* key above determines the *template set cardinality*.  This 
+       .. note:: The *contexts* key above determines the *template set cardinality*.  This 
            determines if the templates are rendered once per *Entity* in the data model, or 
            rendered once, with all *Entities'* rendering in a single output.  
 
