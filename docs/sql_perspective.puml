@@ -1,0 +1,11 @@
+@startuml
+
+!$data = %load_json("sql_perspective.json")
+
+rectangle SQL #blue as "
+{{json
+$data
+}}
+"
+
+@enduml

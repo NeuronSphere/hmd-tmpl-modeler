@@ -1,0 +1,58 @@
+{
+    "perspective_name" : "sql",
+    "perspective_display" : "SQL",
+    "graph_display" : {},
+    "entity_extensions" : [
+        {
+            "table_name":{
+                "displan": "Table Name",
+                "descrption": "The table name in the physical database.  May contain parameters?",
+                "extension_type": "short_text",
+                "default" : "{entity.name}"
+            }
+        }
+    ],
+    "noun_extensions" : {},
+    "relationship_extensions": {},
+    "attribute_extensions" : [
+        {
+            "datatype" : { 
+                "display": "Data Type",
+                "description" : "Basic SQL Datatypes based on the SQL 2023 standard",
+                "extension_type" : "enum",
+                "enum_values" : [
+                    {
+                        "id":"varchar",
+                        "description" : "Basic varchar type",
+                        "definition" : "VARCHAR({p0})", 
+                        "p0" : {
+                            "description" : "Max length of field, int",
+                            "default" : 255
+                        }
+                    },
+                    {
+                        "id":"decimal",
+                        "description" : "Decimal  number",
+                        "definition"  : "DECIMAL({p0},{p1})",
+                        "p0" : {
+                            "description" : "Total Digits",
+                            "default": 6
+                        },
+                        "p1" : {
+                            "description" : "Digits to the right of point",
+                            "default": 2
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "is_nullable" : {
+                "display": "Is Nullable",
+                "description": "Can this field be left or set to NULL?",
+                "extension_type": "bool",
+                "default": "true"
+            }
+        }
+    ]
+}

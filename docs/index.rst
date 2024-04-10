@@ -18,4 +18,5 @@ execute them locally, and considerations for source control and usage in CI.
    basic_usage
    new_templates
    ci_considerations
+   perspectives
 

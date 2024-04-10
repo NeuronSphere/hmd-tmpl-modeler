@@ -23,12 +23,14 @@ To render these templates with your data models on your computer:
 
 #.  Add your models - while *hmd mickey* can consume an array  of data formats containing
     essentially any data model(s), the templates in this repository are all designed to 
-    consume  NeuronSphere Entity Models and their extensions.  Use one of these options:
+    consume  NeuronSphere Entity Models and their extensions.  
     
-    #.  Use the `NeuronSphere Modeler <https://modeler.neuronsphere.io/>`_ to create and collaborate on 
+    Use one of these options:
+    
+    *.  Use the `NeuronSphere Modeler <https://modeler.neuronsphere.io/>`_ to create and collaborate on 
         your data model and export it.  Within the exported zip file there is a 'src' directory containing 
         a 'schemas' folder.  Place that schemas folder within the 'src' folder of this (hmd-tmpl-modeler) repository.
-    #.  Manually create the appropriate *.hms* files and place them into 'src/schemas/<namespace>' in 
+    *.  Manually create the appropriate *.hms* files and place them into 'src/schemas/<namespace>' in 
         this (hmd-tmpl-modeler) repository.  This is possible, but annoying to do manually.
     
 #.  Run mickey for all templates 

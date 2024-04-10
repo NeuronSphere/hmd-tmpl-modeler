@@ -145,6 +145,7 @@ in impossible-to-track ways that are the roots of many problems.
 *  **Inherit** is to create an Entity based on an existing Entity, with the ability to add new 
    attributes and perspectives, but not change existing attributes or extensions.  Changes to 
    source models can be automatically applied.  Multi-inheritence is allowed/encouranged as a pattern.
+*  **Attribute References** ?
 
 A programmer might want to start with an existing entity, add several new 
 attributes, and then generate python dataclasses or pydantic models using the 
@@ -156,3 +157,11 @@ Defining Perspectives as Metadata
 Shows explicit structures for perspective definitions, specifically how 
 the various types/enums are defined.
 
+Examples of the basic SQL perspective:
+
+.. uml:: sql_perspective.puml
+   :align: center
+
+
+.. literalinclude:: sql_perspective.json
+   :language: json
