@@ -1,0 +1,40 @@
+@startuml
+actor data_engineer as "Data Engineer"
+actor dba as "DBA"
+actor data_architect as "Data Architect"
+actor product_owner as "Product Owner"
+actor api_developer as "Software Developer\n/API Lead"
+actor compliance as "Quality and\nCompliance"
+
+rectangle conceptual_model as "Conceptual\nModel"
+rectangle sql_logical_model as "SQL Logical\nModel"
+rectangle sql_physical_model as "SQL Physical\nModel"
+rectangle question as "?"
+rectangle code_gen as "Generator\n/Templates"
+database target_db as "Target DB"
+
+rectangle github as "Git Repo"
+
+file ddl_physical_sql as "Table DDL"
+file ddl_view_sql as "View DDL"
+file documentation as "Generated\nDocumentation"
+
+conceptual_model -> sql_logical_model
+sql_logical_model -> sql_physical_model
+conceptual_model -down-> question
+api_developer -up-> conceptual_model
+
+product_owner <--> conceptual_model: Collab
+data_architect <--> conceptual_model: Collab
+
+data_architect <--> sql_logical_model
+data_engineer <--> sql_logical_model
+
+data_engineer <--> sql_physical_model
+dba <--> sql_physical_model
+
+
+compliance <-- documentation: "Used in audit\nand control"
+
+
+@enduml

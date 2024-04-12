@@ -2,16 +2,17 @@
 
 NeuronSphere Modeler Public Templates
 ===============================================================
+`NeuronSphere Modeler <https://modeler.neuronsphere.io/>`_ is a polyglot data model collaboration platform.
 
-This repository contains the templates used in the `NeuronSphere Modeler <https://modeler.neuronsphere.io/>`_. 
+You may take a portion of a *standard* or *extended* model and export it through templates to produce code, 
+configuration, documentation, and more.
 
-Instructions on how to extend the default templates for your specific requirements,
-execute them locally, and considerations for source control and usage in CI.
+This repository contains the templates used in the `NeuronSphere Modeler <https://modeler.neuronsphere.io/>`_,
+as well as tooling and convenience functions to allow creating and extending new template sets.
 
-* Build this documentation with the package *hmd-cli-bartleby* and the command *hmd bartleby pdf*
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents
    :numbered:
 
@@ -19,4 +20,5 @@ execute them locally, and considerations for source control and usage in CI.
    new_templates
    ci_considerations
    perspectives
+
 

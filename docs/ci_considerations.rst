@@ -5,7 +5,7 @@ SCM & CI
 When using code generators in the software development process 
 one should consider source control and *Continuous Integration* (CI).
 
-Most all software development tooling is some form of code-generator, 
+Many software development tools are some form of code-generator, 
 at least in an abstract sense.  We take *source code* in one language,
 supply it to a *compiler*, and it produces some output, often either 
 more source code or a *binary* of some kind (which is actually just more *code*,
@@ -18,7 +18,7 @@ multiple versions of our code over time, like an extra-fancy shared file system.
 those results in some kind of artifact distribution system e.g.: docker's image repositories,
 maven repositories, Pypi for python, etc.  
 
-With code-generation this presents a challenge as the outputs may not always be a package
+With code-generation this presents a challenge as the outputs may not always be in a package
 based on a technology with a distribution ecosystem.  There are a few ways to handle this:
 
 #.  Model & Build -> Discard Models, hand-modify output -> Check in output : This is *Full Self-Flagelation**
@@ -26,5 +26,5 @@ based on a technology with a distribution ecosystem.  There are a few ways to ha
 #.  Model & Build -> Check in Models, *CI* pipeline renders output -> package/tag/compile/publish results : 
     *Model Driven Development*
 
-*NeuronSphere Artifact Librarian* can be used as a repository for these model driven outputs, with cli tools for packaging
-and publishing available.  
+In a near future release, Modeler will support direct template rendering into git branches.  If you 
+have strong opinions about how that should work, please let us know.

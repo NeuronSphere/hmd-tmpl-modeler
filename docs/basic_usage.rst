@@ -32,6 +32,7 @@ To render these templates with your data models on your computer:
         a 'schemas' folder.  Place that schemas folder within the 'src' folder of this (hmd-tmpl-modeler) repository.
     *.  Manually create the appropriate *.hms* files and place them into 'src/schemas/<namespace>' in 
         this (hmd-tmpl-modeler) repository.  This is possible, but annoying to do manually.
+    *.  Use a tool or script to extract *.hms* model files from relational or other data sources.
     
 #.  Run mickey for all templates 
 
@@ -46,7 +47,8 @@ Repository Layout
 
 *  /docs - docs and drawings as code, rendered with *hmd-cli-bartleby*
 *  /src - souce code and models 
-*  /test - RobotFramework test suites
+*  /test - RobotFramework test suites.  Will be extended to include unified test drivers across the
+   primary template outputs.
 *  /meta-data - NeuronSphere manifest.json, VERSION file, and other NeuronSphere tooling & project metadata.
 
-This repository is a *NeuronSphere Compliant Repository*.
+This repository is a *NeuronSphere Compliant Repository*

@@ -2,10 +2,24 @@
 
 Perspectives and Extensions - Infinite Modeling
 ===================================================
+One way to discect software is into 2 primary parts:
 
-The Impedence Mismatch of Type & Relationship Systems
+#.  Defining data models and structures 
+#.  Defining actions, behaviors, and logic that interacts with the defined models
+
+This useful lens can be applied across a vast number of technologies - examples include:
+
+*.  Object Oriented Programming specifically grounds itself in modeling *state* and *behavior*
+*.  SQL subdivides into Data *Definition* Language (DDL) and Data *Manipulation* Language (DML)
+*.  Libraries such as python's Pydantic, or the Lombok library in java serve as advanced ways to 
+    represent object models with validation and standardized behaviors 
+*.  RCP definition specs such as OpenAPI or Protobuf allow definitions of rich object models 
+    and language agnostic function definitions that use these models 
+
+
+Model Impedence Mismatches
 -----------------------------------------------------------
-The primary modeling construct in NeuronSphere Modeler is 
+The base modeling construct in NeuronSphere Modeler is 
 a labeled property graph with an intentionally simplified type & relationship system.
 
 *Entities*, specifically *Nouns* and *Relationships* form a basic underlying
@@ -29,18 +43,35 @@ to generate data representations, but there are 2 primary challenges.
 
 
 
-
-
 Perspectives 
 --------------
 Perspectives are the named visual display variations used in Modeler 
 to adapt the user experience to a more specific data modeling paradigm.
 
-For instance, there is a "Base SQL table" perspective that allows adding 
-metadata about tables and SQL datatypes to entity attributes.
+Different roles in an organization will use different perspectives to update the 
+relevant parts of a model based on the project and technology chosen.  
 
-A programmer might want to generate python dataclasses or pydantic models using the 
-python-dataclass and python-pydandic perspectives respectively.
+Examples include:
+
+*  There is a "Base SQL" perspective that allows adding 
+   metadata about tables and SQL datatypes to entities and their attributes.
+*  A programmer might want to generate python dataclasses or pydantic models using the 
+   python-dataclass and python-pydandic perspectives respectively.
+*  A data quality perspective allows logical constraint capture, while perspectives 
+   allow seeing the implementation in multiple manifestations.  We'd like to see that 
+   an attribute will materialize as "Not Null" in a database, but will have a similar constraint 
+   declaration in programatic data models and APIs based on the same conceptual model.
+*  We might add a perspective for a particular company or project to allow collaboration on additional 
+   data governance metadata that can be output into custom documentation or downstream systems.
+
+In a *SQL Centric* modeling paradigm, we pass from *Conceptual Modeling* into *Logical Modeling* and then 
+*Physical Modeling*.  Perspectives on a base conceptual model allows this progression, but also allows 
+similar progressions into other modeling paradigms.
+
+What does this look like?  We can have a discussion about a few new entities and attribute changes in a data 
+model, and then percolate those changes through multiple technology stakeholders for 
+feedback, and instantiate any collection of custom data models into git for further 
+analysis.
 
 Entity Graph Overall Display
 ++++++++++++++++++++++++++++++
@@ -127,7 +158,11 @@ faves     True      Collection  array             true
 
 Extensions (Perspective Data Storage)
 ----------------------------------------
-Describes/Shows where in the json structures the perspective data is shared.
+Perspectives define how a specific modeling construct visually appear, and control 
+what additional metadata may be stored at various levels of the model.
+
+*Extensions* describe where additional metadata will be stored in the json 
+representation of an object model.
 
 
 Import vs Inheritance
@@ -145,7 +180,7 @@ in impossible-to-track ways that are the roots of many problems.
 *  **Inherit** is to create an Entity based on an existing Entity, with the ability to add new 
    attributes and perspectives, but not change existing attributes or extensions.  Changes to 
    source models can be automatically applied.  Multi-inheritence is allowed/encouranged as a pattern.
-*  **Attribute References** ?
+*  **Attribute References** allow the re-use of individual governed attributes from existing models in a new model.
 
 A programmer might want to start with an existing entity, add several new 
 attributes, and then generate python dataclasses or pydantic models using the 
