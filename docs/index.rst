@@ -17,6 +17,7 @@ as well as tooling and convenience functions to allow creating and extending new
    :numbered:
 
    basic_usage
+   model_branching
    new_templates
    ci_considerations
    perspectives
