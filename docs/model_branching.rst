@@ -9,19 +9,13 @@ The general flow for model collaboration is:
 
 #.  When a model owner[fn1] wishes to collaborate with someone, they *share a 
     collaboration link*.  This is similar to creating a *public read-only* link, 
-    but requires the addition of the collaborating users' email address(es).
+    but allows for the opening user to make edits to the model.
 
-    #.  For each email address entered, Modeler will create a collaboration link that 
-        is only accessible by that user.  Note the user may not exist at the time of
-        link creation.  
     #.  The collaboration links show up in the same place as the read-only links a 
         model owner has created, and click tracking, aging, etc are all equally 
         available for collaboration links as for read-only.
     #.  Link owner needs to be able to "re-copy link to clipboard" from link listing, or have the 
         option to "re-send collaboration email" (ideally both).
-    #.  A baseline of 1 *Collaboration Credit* is assigned to the link at creation time.  If the 
-        collaborating user exists and is a Professional user, no credit is used, else standard credit 
-        (less promotion) rate applies to the link. 
 
 #.  When a *collaborator* clicks a collabortion link, in addition to regular link-tracking
     activity, the following *branching* activities occur.
@@ -62,7 +56,7 @@ Where the model-diff is producing changes, the UI should highlight theses areas.
    (e.g. 'description changed' or 'extension added')
 
 
-
+The event of merging changes from a collaborating user costs 1 *collaboration credit*
 
 [fn1]the single owner of a model or a member of the group that owns a model
 
