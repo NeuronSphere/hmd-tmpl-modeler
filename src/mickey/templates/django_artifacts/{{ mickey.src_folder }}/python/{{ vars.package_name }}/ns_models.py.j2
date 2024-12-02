@@ -1,0 +1,91 @@
+{%- macro get_django_default_type(attr_obj) %}
+{%- if attr_obj.type == 'float' -%}
+FloatField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- elif attr_obj.type == 'integer' -%}
+IntegerField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- elif attr_obj.type == 'timestamp' -%}
+DateTimeField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- elif attr_obj.type == 'mapping' -%}
+JSONField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- elif attr_obj.type == 'collection' -%}
+JSONField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- elif attr_obj.type == 'blob' -%}
+TextField({%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- else -%}
+CharField(max_length=255,{%- if 'description' in attr_obj %}help_text="{{attr_obj.description}}",db_comment="{{attr_obj.description}}",{% endif %}{% if attr_obj.required %}null=False, blank=False{% endif %})
+{%- endif -%}
+{% endmacro -%}
+
+{%- macro get_django_data_type(attr_obj) %}
+{%- if 'extensions' in attr_obj -%}
+{%- if 'django-models' in attr_obj.extensions and 'definition' in attr_obj.extensions.get('django-models', {}).get('field', {}) -%}
+{{ attr_obj.extensions['django-models']['field']['definition']}}({% for p, val in attr_obj.extensions['django-models']['field'].get('parameters', {}).items() if val is not none  %}{{ p }}={{ val }}{% if not loop.last %},{% endif %}{% endfor %})
+{%- else -%}
+{{ get_django_default_type(attr_obj)}}
+{%- endif -%}
+{%- else -%}
+{{ get_django_default_type(attr_obj)}}
+{%- endif -%}
+{% endmacro -%}
+
+{%- macro get_related_fields(noun) %}
+# From Relationships
+{%- for rel in relationships|selectattr("ref_from", "eq", noun.namespace ~ '.' ~ noun.name)%}
+{%- if rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "*" and rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "1" %}
+{%- if rel.attributes|length == 0 %}
+{{ rel.name }}= models.ForeignKey("{{ rel.ref_to.split('.')[-1] | snake_to_pascal }}", models.CASCADE)
+{% else %}
+{{ rel.name }}= models.ManyToManyField("{{ rel.ref_to.split('.')[-1] | snake_to_pascal }}", through="{{ rel.name | snake_to_pascal }}", through_fields=("ref_from", "ref_to"))
+{% endif %}
+{%- elif rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "*" and rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "*" %}
+{{ rel.name }}= models.ManyToManyField("{{ rel.ref_to.split('.')[-1] | snake_to_pascal }}", through="{{ rel.name | snake_to_pascal }}", through_fields=("ref_from", "ref_to"))
+{%- elif rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "1" and rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "1" %}
+{%- if rel.attributes|length == 0 %}
+{{ rel.name }}= models.OneToOneField("{{ rel.ref_to.split('.')[-1] | snake_to_pascal }}", models.CASCADE, {% if rel.extensions.get("django-models", {}).get("ref_to_null", {}).get("value", False) %}null=True, blank=True{% endif %})
+{%- endif %}
+{%- endif %}
+{% endfor %}
+# To Relationships
+{%- for rel in relationships|selectattr("ref_to", "eq", noun.namespace ~ '.' ~ noun.name) %}
+{%- if rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "*" and rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "1" %}
+{%- if rel.attributes|length == 0 %}
+{{ rel.name }}= models.ForeignKey("{{ rel.ref_from.split('.')[-1] | snake_to_pascal }}", models.CASCADE)
+{%- else %}
+{{ rel.name }}= models.ManyToManyField("{{ rel.ref_from.split('.')[-1] | snake_to_pascal }}", through="{{ rel.name | snake_to_pascal }}", through_fields=("ref_to", "ref_from"))
+{%- endif %}
+{%- elif rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "*" and rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "*" %}
+{{ rel.name }}= models.ManyToManyField("{{ rel.ref_from.split('.')[-1] | snake_to_pascal }}", through="{{ rel.name | snake_to_pascal }}", through_fields=("ref_to", "ref_from"))
+{%- elif rel.get("adornments", {}).get("ref_to", {}).get("cardinality", "1") == "1" and rel.get("adornments", {}).get("ref_from", {}).get("cardinality", "1") == "1" %}
+{%- if rel.attributes|length == 0 %}
+{{ rel.name }}= models.OneToOneField("{{ rel.ref_to.split('.')[-1] | snake_to_pascal }}", models.CASCADE, {% if rel.extensions.get("django-models", {}).get("ref_from_null", {}).get("value", False) %}null=True, blank=True{% endif %})
+{%- endif %}
+{%- endif %}
+{% endfor -%}
+{% endmacro -%}
+
+# DO NOT EDIT
+# Auto generated from ./src/models
+from django.db import models
+{% for module, class in nouns| selectattr("extensions") | map(attribute="extensions") | selectattr("django-models") | map(attribute="django-models") | groupby("base_model_module.value") %}
+{%- if module != '' -%}from {{ module }} import {{ class | selectattr("base_model_class", "defined") | map(attribute="base_model_class") | selectattr("value", "defined") | map(attribute="value") | join(",")}}{%- endif %}
+{% endfor%}
+
+{% for noun in nouns %}
+class {{ noun.name | snake_to_pascal }}({% if noun.extensions.get("django-models", {}).get("base_model_class", {}).get("value", "") != ""%}{{ noun.extensions["django-models"]["base_model_class"]["value"]}}{% else %}models.Model{% endif %}):
+    # {{noun.namespace}}.{{noun.name}}{% if noun.description %}- {{ noun.description }}{% endif %}
+    {% for attr, val in noun.attributes.items() -%}
+    {{ attr }}= models.{{ get_django_data_type(val) }}
+    {% endfor %}
+    {{ get_related_fields(noun) | indent(4)}}
+{% endfor %}
+
+{% for rel in relationships %}
+{% if (rel.get("adornments", {}).get("ref_from", "1") == "*" and rel.get("adornments", {}).get("ref_to", "1") == "*") or rel.attributes|length > 0 %}
+class {{ rel.name | snake_to_pascal }}({% if rel.extensions.get("django-models", {}).get("base_model_class", {}).get("value", "") != ""%}{{ rel.extensions["django-models"]["base_model_class"]["value"]}}{% else %}models.Model{% endif %}):
+    ref_from = models.ForeignKey({{ rel.ref_from.split('.')[-1] | snake_to_pascal }}, models.CASCADE)
+    ref_to = models.ForeignKey({{ rel.ref_to.split('.')[-1] | snake_to_pascal }}, models.CASCADE)
+    {% for attr, val in rel.attributes.items() %}
+    {{ attr }}= models.{{ get_django_data_type(val) }}
+    {% endfor %}
+{% endif %}
+{% endfor %}

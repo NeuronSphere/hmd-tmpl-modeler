@@ -1,0 +1,12 @@
+# DO NOT EDIT - generated
+from django.contrib import admin
+from .ns_models import *
+
+{% for noun in nouns %}
+admin.site.register({{ noun.name | snake_to_pascal }})
+{% endfor %}
+{% for rel in relationships %}
+{% if (rel.get("adornments", {}).get("ref_from", "1") == "*" and rel.get("adornments", {}).get("ref_to", "1") == "*") or rel.attributes|length > 0 %}
+admin.site.register({{ rel.name | snake_to_pascal }})
+{% endif %}
+{% endfor %}
