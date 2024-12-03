@@ -1,0 +1,69 @@
+{
+  "packages": [
+    {
+      "name": "django_artifacts",
+      "path": "./templates/django_artifacts",
+      "cardinality": "1"
+    },
+    {
+      "name": "docs",
+      "path": "./templates/docs",
+      "cardinality": "M"
+    },
+    {
+      "name": "microservice",
+      "path": "./templates/microservice",
+      "cardinality": "1"
+    },
+    {
+      "name": "postgres_tables",
+      "path": "./templates/postgres_tables",
+      "cardinality": "M"
+    },
+    {
+      "name": "postgres_tables_all",
+      "path": "./templates/postgres_tables_all",
+      "cardinality": "1"
+    },
+    {
+      "name": "postgres_view_all",
+      "path": "./templates/postgres_view_all",
+      "cardinality": "1"
+    },
+    {
+      "name": "postgres_views",
+      "path": "./templates/postgres_views",
+      "cardinality": "M"
+    },
+    {
+      "name": "puml",
+      "path": "./templates/puml",
+      "cardinality": "1"
+    },
+    {
+      "name": "python_client",
+      "path": "./templates/python_client",
+      "cardinality": "1"
+    },
+    {
+      "name": "python_lib",
+      "path": "./templates/python_lib",
+      "cardinality": "M"
+    },
+    {
+      "name": "raw_model",
+      "path": "./templates/raw_model",
+      "cardinality": "1"
+    },
+    {
+      "name": "raw_schemas",
+      "path": "./templates/raw_schemas",
+      "cardinality": "M"
+    },
+    {
+      "name": "typescript_lib",
+      "path": "./templates/typescript_lib",
+      "cardinality": "1"
+    }
+  ]
+}
