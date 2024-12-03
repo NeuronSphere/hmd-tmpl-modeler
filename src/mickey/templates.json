@@ -1,5 +1,5 @@
 {
-  "packages": [
+  "modules": [
     {
       "name": "django_artifacts",
       "path": "./templates/django_artifacts",
