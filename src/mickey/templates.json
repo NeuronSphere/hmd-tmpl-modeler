@@ -64,6 +64,11 @@
       "name": "typescript_lib",
       "path": "./templates/typescript_lib",
       "cardinality": "1"
+    },
+    {
+      "name": "_utils",
+      "path": "./templates/_utils",
+      "cardinality": "1"
     }
   ]
 }
