@@ -1,0 +1,12 @@
+# Gitleaks configuration. The pre-commit hook scans staged changes for secrets.
+# Keep the built-in rules; add only what this repository needs on top.
+[extend]
+useDefault = true
+
+# Record a false positive here, with the reason, instead of disabling the hook.
+# Prefer an inline `gitleaks:allow` comment for a single line, and a path or
+# regex entry below only for fixtures that must contain secret-shaped values.
+#
+# [[allowlists]]
+# description = "Why this is not a secret"
+# paths = ['''test/fixtures/example\.txt''']
