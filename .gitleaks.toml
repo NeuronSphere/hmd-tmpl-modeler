@@ -10,3 +10,45 @@ useDefault = true
 # [[allowlists]]
 # description = "Why this is not a secret"
 # paths = ['''test/fixtures/example\.txt''']
+
+# Fixed and known-default credentials (REQ_DEFCRED_001, after NS-SEC-2026-003).
+# The built-in generic-api-key rule needs ten characters and an entropy of 3.5,
+# so short fixed passwords ("admin") and placeholders ("THIS IS UNSAFE!") pass
+# it. These rules have no entropy requirement. A value that is a Helm or shell
+# template expression, or a reference (secretKeyRef, *SecretKey names, an
+# ExternalSecret data key), is not a literal and is not matched. Code is not
+# matched either: a quoted key needs a quoted value, "=" needs a quoted value
+# (except an INI-style line, key = value, for secret keys), and the fixed
+# values are matched case-sensitively, so `{"password": password}` and
+# `password: PASSWORD` pass. Nothing matches across a line break.
+
+[[rules]]
+id = "fixed-password-literal"
+description = "A password field holding a fixed, common value"
+regex = '''(?im)(?:password|passwd|pwd)(?:["'][ \t]*[:=][ \t]*["']|[ \t]*:[ \t]*["']?|[ \t]*=[ \t]*["'])((?-i:admin|user|password|changeme!?|changeMe!?|root|test|testpassword))["']?(?:[ \t,;}\]]|$)'''
+keywords = ["password", "passwd", "pwd"]
+
+[[rules]]
+id = "known-unsafe-marker"
+description = "A placeholder marker as the value of a key named like a secret"
+regex = '''(?i)(?:secret|password|passwd|token|key)[\w.-]*["']?[ \t]*[:=][ \t]*["']?(THIS IS UNSAFE!?|CHANGE_?ME!?)'''
+keywords = ["unsafe", "change_me", "changeme"]
+
+[[rules]]
+id = "secret-key-literal"
+description = "A signing or encryption key assigned a literal"
+regex = '''(?im)(?:(?:^|[ \t"'{,]|__)(?:secret_?key|webserver_?secret_?key|fernet_?key|jwt_?secret)(?:["'][ \t]*:[ \t]*["']|[ \t]*:[ \t]*["']?|[ \t]*=[ \t]*["'])([^\s"'(){}\[\]$<]{6,})(?:["' \t,;}]|$)|^[ \t]*(?:secret_?key|webserver_?secret_?key|fernet_?key|jwt_?secret)[ \t]*=[ \t]*([^\s"'(){}\[\]$<.,]{6,})[ \t]*$)'''
+keywords = ["secret", "fernet", "jwt"]
+
+[[rules.allowlists]]
+description = "An ExternalSecret data entry names the Kubernetes Secret key, it holds no value"
+regexTarget = "line"
+regexes = ['''^\s*-\s+secretKey:''', '''^\s*"secretKey"\s*:''']
+
+# Local development files may hold fixed credentials on purpose. If this
+# repository has any, allowlist them by path with the reason, for example:
+#
+# [[allowlists]]
+# description = "Local-only credentials for the docker-compose stack, never deployed"
+# targetRules = ["fixed-password-literal", "known-unsafe-marker", "secret-key-literal"]
+# paths = ['''(^|/)src/local/''', '''(^|/)meta-data/config_local\.json$''']
